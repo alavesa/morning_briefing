@@ -16,7 +16,6 @@ tags:
 
 Conversational app for the Reachy Mini robot combining realtime voice, vision, personality-aware tools, and choreographed motion.
 
-![Reachy Mini Dance](docs/assets/reachy_mini_dance.gif)
 
 ## Table of contents
 
