@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Morning Briefing</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="ambient"></div>
+    <div class="container">
+      <header class="hero">
+        <div class="pill">Reachy Mini App</div>
+        <h1>Morning Briefing</h1>
+        <p class="subtitle">Umbrella, next bus and the news. Say good morning and Reachy Mini gets you out the door in Stavanger.</p>
+      </header>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Getting Started</p>
+            <h2>Installation</h2>
+          </div>
+        </div>
+        <p class="muted">Install this app on your Reachy Mini using the app store, or run it locally:</p>
+        <pre><code>uv sync
+reachy-mini-daemon --sim  # in another terminal
+python -m morning_briefing.main --ui --no-camera</code></pre>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">What it says</p>
+            <h2>Three sources, one briefing</h2>
+          </div>
+        </div>
+        <p class="muted">Rain check from MET Norway, live departures from Entur for your home stop, and the top NRK headlines. Speech runs on the Hugging Face realtime backend, so no API key is needed. Stop, coordinates and feed are set with environment variables; see the README.</p>
+      </div>
+    </div>
+  </body>
+</html>
