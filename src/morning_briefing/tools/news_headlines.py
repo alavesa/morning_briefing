@@ -1,4 +1,4 @@
-"""Top news headlines from NRK's RSS feed."""
+"""Top news headlines from a chosen RSS source."""
 
 import os
 import logging
@@ -12,16 +12,25 @@ from morning_briefing.tools.core_tools import Tool, ToolDependencies
 
 logger = logging.getLogger(__name__)
 
-NEWS_FEED_URL_ENV = "MORNING_BRIEFING_NEWS_FEED_URL"
-DEFAULT_NEWS_FEED_URL = "https://www.nrk.no/toppsaker.rss"
+# CNN is deliberately absent: its public RSS feeds stopped updating in 2023.
+NEWS_SOURCES: dict[str, tuple[str, str]] = {
+    "nrk": ("NRK", "https://www.nrk.no/toppsaker.rss"),
+    "bbc": ("BBC News", "https://feeds.bbci.co.uk/news/rss.xml"),
+    "bbc_world": ("BBC World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
+}
+DEFAULT_SOURCE_ENV = "MORNING_BRIEFING_NEWS_SOURCE"
+DEFAULT_SOURCE = "nrk"
 MAX_HEADLINES = 10
 _DEFAULT_HEADLINES = 5
 _REQUEST_TIMEOUT_S = 10.0
 
 
-def news_feed_url() -> str:
-    """Return the configured RSS feed, defaulting to NRK's top stories."""
-    return os.getenv(NEWS_FEED_URL_ENV, "").strip() or DEFAULT_NEWS_FEED_URL
+def default_news_source() -> str:
+    """Return the configured default source key, falling back to NRK for unknown values."""
+    configured = os.getenv(DEFAULT_SOURCE_ENV, "").strip().lower()
+    if configured and configured not in NEWS_SOURCES:
+        logger.warning("Unknown %s=%r, using %s", DEFAULT_SOURCE_ENV, configured, DEFAULT_SOURCE)
+    return configured if configured in NEWS_SOURCES else DEFAULT_SOURCE
 
 
 def parse_headlines(feed_xml: str, count: int = _DEFAULT_HEADLINES) -> list[dict[str, Any]]:
@@ -57,17 +66,23 @@ async def fetch_feed(url: str) -> str:
         return response.text
 
 
-class NrkHeadlines(Tool):
-    """Read the current top headlines from NRK."""
+class NewsHeadlines(Tool):
+    """Read the current top headlines from NRK or the BBC."""
 
-    name = "nrk_headlines"
+    name = "news_headlines"
     description = (
-        "Get the current top news headlines from NRK (Norwegian public broadcaster), each with a one-sentence "
-        "summary in Norwegian. Summarize or translate them for the user as the conversation language requires."
+        "Get the current top news headlines with one-sentence summaries. Sources: 'nrk' (Norwegian public "
+        "broadcaster, in Norwegian), 'bbc' (BBC News front page) or 'bbc_world' (BBC world news). Pick the source "
+        "the listener prefers; translate or summarize into the conversation language."
     )
     parameters_schema = {
         "type": "object",
         "properties": {
+            "source": {
+                "type": "string",
+                "enum": list(NEWS_SOURCES),
+                "description": "Which outlet to read. Omit to use the household default.",
+            },
             "count": {
                 "type": "integer",
                 "minimum": 1,
@@ -79,14 +94,16 @@ class NrkHeadlines(Tool):
     }
 
     async def __call__(self, deps: ToolDependencies, **kwargs: Any) -> dict[str, Any]:
-        """Fetch the feed and return the leading headlines."""
+        """Fetch the chosen feed and return the leading headlines."""
+        source = str(kwargs.get("source") or default_news_source()).lower()
+        if source not in NEWS_SOURCES:
+            return {"error": f"unknown news source {source!r}; choose one of {', '.join(NEWS_SOURCES)}"}
         count = min(MAX_HEADLINES, max(1, int(kwargs.get("count") or _DEFAULT_HEADLINES)))
-        url = news_feed_url()
-        logger.info("Tool call: nrk_headlines url=%s count=%d", url, count)
+        display_name, url = NEWS_SOURCES[source]
+        logger.info("Tool call: news_headlines source=%s count=%d", source, count)
         try:
-            feed_xml = await fetch_feed(url)
-            headlines = parse_headlines(feed_xml, count)
+            headlines = parse_headlines(await fetch_feed(url), count)
         except (httpx.HTTPError, ElementTree.ParseError, ValueError) as e:
-            logger.error("nrk_headlines failed: %s", e)
-            return {"error": f"could not read the news feed: {e}"}
-        return {"source": "NRK", "headlines": headlines}
+            logger.error("news_headlines(%s) failed: %s", source, e)
+            return {"error": f"could not read {display_name}: {e}"}
+        return {"source": display_name, "headlines": headlines}

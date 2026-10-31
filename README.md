@@ -13,7 +13,8 @@ tags:
 # Morning Briefing
 
 A Reachy Mini conversation app that gets you out the door in Stavanger: say good morning and the robot tells you
-whether to bring an umbrella, when the next bus leaves and what is in the news.
+whether to bring an umbrella, when the next bus leaves and what is in the news. Built for a two-person
+household: it asks who is up and reads each person their own outlet.
 
 Forked from the [Reachy Mini conversation app](https://github.com/pollen-robotics/reachy_mini_conversation_app)
 with the `reachy-mini-app-assistant` conversation template. The original README is kept as `README_OLD.md`.
@@ -24,7 +25,7 @@ with the `reachy-mini-app-assistant` conversation template. The original README 
 |------|--------|---------------------|
 | `rain_check` | [MET Norway Locationforecast 2.0](https://api.met.no/weatherapi/locationforecast/2.0/documentation) | Umbrella or not, when rain starts, precipitation total, temperature range, wind for the coming hours (default 12). |
 | `next_bus` | [Entur JourneyPlanner v3](https://developer.entur.org/pages-journeyplanner-journeyplanner) | Next departures from the home stop with live times, optionally filtered by destination. |
-| `nrk_headlines` | [NRK top stories RSS](https://www.nrk.no/toppsaker.rss) | The leading headlines with one-sentence summaries, translated into the conversation language. |
+| `news_headlines` | [NRK](https://www.nrk.no/toppsaker.rss), [BBC News](https://feeds.bbci.co.uk/news/rss.xml) or [BBC World](https://feeds.bbci.co.uk/news/world/rss.xml) RSS | The leading headlines with one-sentence summaries, from the outlet the listener prefers, in the conversation language. CNN is left out because its RSS feeds stopped updating in 2023. |
 
 The assistant prompt and enabled tools live in `profiles/_morning_briefing_locked_profile/profile.md`.
 The robot's usual conversation tools (emotions, head moves, memory, volume, sleep) stay enabled.
@@ -37,7 +38,7 @@ Everything has a default for Lervigbrygga, Stavanger. Override in `.env` (see `.
 |----------|---------|---------|
 | `MORNING_BRIEFING_STOP_PLACE_ID` | `NSR:StopPlace:27111` (Lervigsveien) | Entur NSR stop place for `next_bus`. Nearby: `NSR:StopPlace:27710` Søilands gate, `NSR:StopPlace:27113` Lervigtunet. |
 | `MORNING_BRIEFING_LATITUDE` / `MORNING_BRIEFING_LONGITUDE` | `58.9664` / `5.7641` | Forecast point for `rain_check`. |
-| `MORNING_BRIEFING_NEWS_FEED_URL` | NRK top stories | Any RSS 2.0 feed for `nrk_headlines`. |
+| `MORNING_BRIEFING_NEWS_SOURCE` | `nrk` | Outlet for `news_headlines` when nobody asks for one: `nrk`, `bbc` or `bbc_world`. The profile itself maps each person to their outlet. |
 
 Speech runs on the Hugging Face realtime backend and needs no API key. `HF_TOKEN` is optional.
 
