@@ -7,7 +7,6 @@
 *.png lfs
 *.apng lfs
 *.atsc lfs
-*.gif lfs
 *.bmp lfs
 *.exr lfs
 *.tga lfs
@@ -23,8 +22,6 @@
 *.clip lfs
 *.webm lfs
 *.webp lfs
-*.svg lfs
-*.svgz lfs
 *.psd lfs
 *.afphoto lfs
 *.afdesign lfs
