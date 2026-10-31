@@ -78,7 +78,7 @@ def test_spec_offers_every_source() -> None:
     """The LLM sees each configured outlet as an enum choice."""
     spec = NewsHeadlines().spec()
     assert spec["name"] == "news_headlines"
-    assert spec["parameters"]["properties"]["source"]["enum"] == ["nrk", "bbc", "bbc_world"]
+    assert spec["parameters"]["properties"]["source"]["enum"] == ["nrk", "bbc", "bbc_world", "yle", "yle_news"]
     assert set(spec["parameters"]["properties"]["source"]["enum"]) == set(NEWS_SOURCES)
 
 

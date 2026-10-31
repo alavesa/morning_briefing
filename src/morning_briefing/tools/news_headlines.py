@@ -17,6 +17,8 @@ NEWS_SOURCES: dict[str, tuple[str, str]] = {
     "nrk": ("NRK", "https://www.nrk.no/toppsaker.rss"),
     "bbc": ("BBC News", "https://feeds.bbci.co.uk/news/rss.xml"),
     "bbc_world": ("BBC World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
+    "yle": ("Yle", "https://feeds.yle.fi/uutiset/v1/majorHeadlines/YLE_UUTISET.rss"),
+    "yle_news": ("Yle News", "https://feeds.yle.fi/uutiset/v1/recent.rss?publisherIds=YLE_NEWS"),
 }
 DEFAULT_SOURCE_ENV = "MORNING_BRIEFING_NEWS_SOURCE"
 DEFAULT_SOURCE = "nrk"
@@ -67,13 +69,14 @@ async def fetch_feed(url: str) -> str:
 
 
 class NewsHeadlines(Tool):
-    """Read the current top headlines from NRK or the BBC."""
+    """Read the current top headlines from NRK, the BBC or Yle."""
 
     name = "news_headlines"
     description = (
         "Get the current top news headlines with one-sentence summaries. Sources: 'nrk' (Norwegian public "
-        "broadcaster, in Norwegian), 'bbc' (BBC News front page) or 'bbc_world' (BBC world news). Pick the source "
-        "the listener prefers; translate or summarize into the conversation language."
+        "broadcaster, in Norwegian), 'bbc' (BBC News front page), 'bbc_world' (BBC world news), 'yle' (Finnish "
+        "public broadcaster, in Finnish) or 'yle_news' (Yle's English-language Finland news). Pick the source the "
+        "listener prefers; translate or summarize into the conversation language."
     )
     parameters_schema = {
         "type": "object",
