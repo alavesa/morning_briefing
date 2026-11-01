@@ -14,7 +14,7 @@ tags:
 
 A Reachy Mini conversation app that gets you out the door in Stavanger: say good morning and the robot tells you
 whether to bring an umbrella, when the next bus leaves and what is in the news. Built for a two-person
-household: it asks who is up and reads each person their own outlet.
+household: it asks who is up and reads each person their own outlet. The robot answers to the name Jonathan.
 
 Forked from the [Reachy Mini conversation app](https://github.com/pollen-robotics/reachy_mini_conversation_app)
 with the `reachy-mini-app-assistant` conversation template. The original README is kept as `README_OLD.md`.
